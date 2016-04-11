@@ -14,8 +14,8 @@
 #ifndef CLASSIFIER_H_
 #define CLASSIFIER_H_
 
-#include "data.h"
-#include "hyperparameters.h"
+#include <data.h>
+#include <hyperparameters.h>
 
 using namespace std;
 

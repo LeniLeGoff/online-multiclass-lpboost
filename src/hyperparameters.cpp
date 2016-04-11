@@ -14,7 +14,7 @@
 #include <iostream>
 #include <libconfig.h++>
 
-#include "hyperparameters.h"
+#include <hyperparameters.h>
 
 using namespace std;
 using namespace libconfig;

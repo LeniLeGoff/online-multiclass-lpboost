@@ -24,8 +24,8 @@
 #include <cfloat>
 #include <cassert>
 
-#include "vectors.h"
-#include "LaRank.h"
+#include <linear_larank/vectors.h>
+#include <linear_larank/LaRank.h>
 /////////////////////
 
 void exit_with_help()
@@ -55,16 +55,16 @@ void testing(Machine* svm, Exampler test, char* pred_file)
     std::cout << "Test Error:" << 100 * (err / test.nb_ex) << "%" << std::endl;
 }
 
-Machine* load_model(char* file)
-{
-    Exampler model;
-    model.libsvm_load_data(file, true);
-    Machine* svm = create_larank();
-    for (int i = 0; i < model.nb_ex; i++)
-        svm->add_output(model.data[i].cls, LaFVector(model.data[i].inpt));
+//Machine* load_model(char* file)
+//{
+//    Exampler model;
+//    model.libsvm_load_data(file, true);
+//    Machine* svm = create_larank();
+//    for (int i = 0; i < model.nb_ex; i++)
+//        svm->add_output(model.data[i].cls, LaFVector(model.data[i].inpt));
 
-    return svm;
-}
+//    return svm;
+//}
 
 int main(int argc, char* argv[])
 {

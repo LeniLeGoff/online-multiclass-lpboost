@@ -11,7 +11,7 @@
  *                    Graz University of Technology, Austria
  */
 
-#include "online_rf.h"
+#include <online_rf.h>
 
 RandomTest::RandomTest(const int& numClasses, const int& numFeatures, const VectorXd &minFeatRange, const VectorXd &maxFeatRange) :
     m_numClasses(&numClasses), m_trueCount(0.0), m_falseCount(0.0),
