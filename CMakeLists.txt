@@ -10,12 +10,35 @@ include_directories(/usr/include/eigen2 /usr/include/)
 
 file(GLOB src_files src/*)
 
-#add_library(oml_rf SHARED src/data.cpp src/utilities.cpp src/hyperparameters.cpp src/classifier.cpp src/online_rf.cpp)
-add_library(oml_rf STATIC src/data.cpp src/utilities.cpp src/hyperparameters.cpp src/classifier.cpp src/online_rf.cpp)
+add_library(oml_rf STATIC
+src/data.cpp
+src/utilities.cpp
+src/hyperparameters.cpp
+src/classifier.cpp
+src/online_rf.cpp)
 target_link_libraries(oml_rf config++)
 
+add_library(oml_mcboost STATIC
+src/data.cpp
+src/utilities.cpp
+src/hyperparameters.cpp
+src/classifier.cpp
+src/booster.cpp
+src/online_mcboost.cpp)
+target_link_libraries(oml_mcboost config++)
 
-set(ALL_LIB oml_rf )
+
+add_library(oml_mclpboost STATIC
+src/data.cpp
+src/utilities.cpp
+src/hyperparameters.cpp
+src/classifier.cpp
+src/booster.cpp
+src/online_mclpboost.cpp)
+target_link_libraries(oml_mclpboost config++)
+
+
+set(ALL_LIB oml_rf oml_mcboost oml_mclpboost)
 
 
 install(DIRECTORY src/
