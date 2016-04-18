@@ -3,10 +3,13 @@ project(online-machine-learning)
 
 set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
 
+find_package(Config++ REQUIRED)
 
-link_directories(/usr/lib/x86_64-linux-gnu/ /usr/lib/)
-include_directories(src)
-include_directories(/usr/include/eigen2 /usr/include/)
+link_directories(/usr/lib/x86_64-linux-gnu/)
+include_directories(src/)
+include_directories(/usr/include/eigen2 ${CONFIG++_INCLUDE_DIR})
+
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -lconfig++")
 
 file(GLOB src_files src/*)
 
@@ -16,7 +19,7 @@ src/utilities.cpp
 src/hyperparameters.cpp
 src/classifier.cpp
 src/online_rf.cpp)
-target_link_libraries(oml_rf config++)
+#target_link_libraries(oml_rf ${CONFIG++_LIBRARY})
 
 add_library(oml_mcboost STATIC
 src/data.cpp
@@ -25,7 +28,7 @@ src/hyperparameters.cpp
 src/classifier.cpp
 src/booster.cpp
 src/online_mcboost.cpp)
-target_link_libraries(oml_mcboost config++)
+#target_link_libraries(oml_mcboost ${CONFIG++_LIBRARY})
 
 
 add_library(oml_mclpboost STATIC
@@ -35,7 +38,7 @@ src/hyperparameters.cpp
 src/classifier.cpp
 src/booster.cpp
 src/online_mclpboost.cpp)
-target_link_libraries(oml_mclpboost config++)
+#target_link_libraries(oml_mclpboost ${CONFIG++_LIBRARY})
 
 
 set(ALL_LIB oml_rf oml_mcboost oml_mclpboost)

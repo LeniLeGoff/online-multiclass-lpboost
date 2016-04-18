@@ -14,10 +14,10 @@
 #ifndef ONLINERF_H_
 #define ONLINERF_H_
 
-#include <classifier.h>
-#include <data.h>
-#include <hyperparameters.h>
-#include <utilities.h>
+#include "classifier.h"
+#include "data.h"
+#include "hyperparameters.h"
+#include "utilities.h"
 
 class RandomTest {
  public:
