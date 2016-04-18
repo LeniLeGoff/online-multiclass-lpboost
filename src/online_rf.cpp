@@ -16,7 +16,7 @@
 RandomTest::RandomTest(const int& numClasses, const int& numFeatures, const VectorXd &minFeatRange, const VectorXd &maxFeatRange) :
     m_numClasses(&numClasses), m_trueCount(0.0), m_falseCount(0.0),
     m_trueStats(VectorXd::Zero(numClasses)), m_falseStats(VectorXd::Zero(numClasses)) {
-    m_feature = randDouble(0, numFeatures + 1);
+    m_feature = randDouble(0, numFeatures /*+ 1*/);
     m_threshold = randDouble(minFeatRange(m_feature), maxFeatRange(m_feature));
 }
 

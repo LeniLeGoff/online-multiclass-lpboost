@@ -11,7 +11,7 @@
  *                    Graz University of Technology, Austria
  */
 
-#include <data.h>
+#include "data.h"
 
 void DataSet::findFeatRange() {
     m_minFeatRange = VectorXd(m_numFeatures);

@@ -30,7 +30,7 @@ void train(Classifier* model, DataSet& dataset, Hyperparameters& hp) {
                 Result result(dataset.m_numClasses);
                 model->eval(dataset.m_samples[randIndex[nSamp]], result);
                 if (result.prediction != dataset.m_samples[randIndex[nSamp]].y) {
-                    trainError[nEpoch]++;
+                    trainError[nEpoch] = trainError[nEpoch] + 1.;
                 }
             }
 
