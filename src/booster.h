@@ -16,6 +16,8 @@
 
 #include "classifier.h"
 
+namespace oml {
+
 class Booster : public Classifier {
  public:
     Booster(const Hyperparameters& hp, const int& numClasses, const int& numFeatures,
@@ -29,5 +31,7 @@ class Booster : public Classifier {
     VectorXd m_w;
     vector<Cache> m_cache;
 };
+
+}
 
 #endif // BOOSTER_H

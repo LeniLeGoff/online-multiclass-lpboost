@@ -26,6 +26,7 @@
 
 using namespace std;
 using namespace libconfig;
+using namespace oml;
 
 typedef enum {
     ORT, ORF, OMCBOOST, OMCLPBOOST, LARANK
@@ -108,11 +109,11 @@ int main(int argc, char *argv[]) {
     }
 
     // Load the hyperparameters
-    Hyperparameters hp(confFileName);
+    oml::load_config_file(confFileName);
 
     // Creating the train data
     DataSet dataset_tr, dataset_ts;
-    dataset_tr.load(hp.trainData, hp.trainLabels);
+    dataset_tr.load(Hyperparameters::trainData, Hyperparameters::trainLabels);
     if (doT2 || doTesting) {
         dataset_ts.load(hp.testData, hp.testLabels);
     }
@@ -150,13 +151,13 @@ int main(int argc, char *argv[]) {
 
     if (model) {
         if (doT2) {
-            trainAndTest(model, dataset_tr, dataset_ts, hp);
+            experimenter::trainAndTest<oml::Hyperparameters>(model, dataset_tr, dataset_ts);
         }
         if (doTraining) {
-            train(model, dataset_tr, hp);
+            experimenter::train<oml::Hyperparameters>(model, dataset_tr);
         }
         if (doTesting) {
-            test(model, dataset_ts, hp);
+            experimenter::test<oml::Hyperparameters>(model, dataset_ts);
         }
     }
 

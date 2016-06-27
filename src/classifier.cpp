@@ -13,9 +13,13 @@
 
 #include "classifier.h"
 
-Classifier::Classifier(const Hyperparameters& hp, const int& numClasses) : 
-    m_numClasses(&numClasses), m_hp(&hp) {
-}
+using namespace oml;
 
+Classifier::Classifier(const int& numClasses) :
+    m_numClasses(&numClasses) {
+}
+Classifier::Classifier(const Hyperparameters &hp, const int &numClasses) :
+   m_hp(&hp), m_numClasses(&numClasses) {
+}
 Classifier::~Classifier() {
 }

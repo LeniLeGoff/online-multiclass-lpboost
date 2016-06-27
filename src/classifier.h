@@ -16,13 +16,21 @@
 
 #include "data.h"
 #include "hyperparameters.h"
+#include <memory>
 
 using namespace std;
 
+namespace oml{
+
 class Classifier {
- public:
-    Classifier(const Hyperparameters& hp, const int& numClasses);
-    
+public:
+
+    typedef std::shared_ptr<Classifier> Ptr;
+    typedef const std::shared_ptr<Classifier> ConstPtr;
+
+    Classifier(const int& numClasses);
+    Classifier(const Hyperparameters& hp,const int &numClasses);
+
     virtual ~Classifier();
 
     virtual void update(Sample& sample) = 0;
@@ -32,10 +40,12 @@ class Classifier {
         return m_name;
     }
 
- protected:
+
+protected:
     const int* m_numClasses;
     const Hyperparameters* m_hp;
     string m_name;
 };
+}
 
 #endif /* CLASSIFIER_H_ */

@@ -28,6 +28,7 @@
 #include <cassert>
 #include <cctype>
 
+using namespace oml;
 
 namespace {
 
@@ -569,19 +570,19 @@ SVector::slice(int fi, int ti) const
 void
 SVector::add(const SVector &v2)
 {
-    operator=(::combine(*this, 1, v2, 1));
+    operator=(operators::combine(*this, 1, v2, 1));
 }
 
 void
 SVector::add(const SVector &v2, double c2)
 {
-    operator=(::combine(*this, 1, v2, c2));
+    operator=(operators::combine(*this, 1, v2, c2));
 }
 
 void
 SVector::combine(double c1, const SVector &v2, double c2)
 {
-    operator=(::combine(*this, c1, v2, c2));
+    operator=(operators::combine(*this, c1, v2, c2));
 }
 
 void
@@ -598,6 +599,8 @@ SVector::scale(double c1)
         clear();
     }
 }
+
+
 
 std::ostream &
 operator<<(std::ostream &f, const SVector &v)
@@ -651,6 +654,8 @@ operator>>(std::istream &f, SVector &v)
     return f;
 }
 
+
+
 bool
 SVector::save(std::ostream &f) const
 {
@@ -684,7 +689,7 @@ SVector::load(std::istream &f)
 }
 
 double
-dot(const LaFVector &v1, const LaFVector &v2)
+operators::dot(const LaFVector &v1, const LaFVector &v2)
 {
     int m = min(v1.size(), v2.size());
     const VFloat *f1 = v1;
@@ -696,7 +701,7 @@ dot(const LaFVector &v1, const LaFVector &v2)
 }
 
 double
-dot(const LaFVector &v1, const SVector &v2)
+operators::dot(const LaFVector &v1, const SVector &v2)
 {
     int m = v1.size();
     const VFloat *f = v1;
@@ -709,7 +714,7 @@ dot(const LaFVector &v1, const SVector &v2)
 }
 
 double
-dot(const SVector &v1, const LaFVector &v2)
+operators::dot(const SVector &v1, const LaFVector &v2)
 {
     int m = v2.size();
     const VFloat *f = v2;
@@ -722,7 +727,7 @@ dot(const SVector &v1, const LaFVector &v2)
 }
 
 double
-dot(const SVector &v1, const SVector &v2)
+operators::dot(const SVector &v1, const SVector &v2)
 {
     const SVector::Pair *p1 = v1;
     const SVector::Pair *p2 = v2;
@@ -740,7 +745,7 @@ dot(const SVector &v1, const SVector &v2)
 }
 
 SVector
-combine(const SVector &v1, double a1, const SVector &v2, double a2)
+operators::combine(const SVector &v1, double a1, const SVector &v2, double a2)
 {
     const SVector::Pair *p1 = v1;
     const SVector::Pair *p2 = v2;
@@ -801,7 +806,7 @@ combine(const SVector &v1, double a1, const SVector &v2, double a2)
 }
 
 LaFVector
-combine(const LaFVector &v1, double a1, const SVector &v2, double a2)
+operators::combine(const LaFVector &v1, double a1, const SVector &v2, double a2)
 {
     LaFVector r = v1;
     r.combine(a1, v2, a2);
@@ -809,7 +814,7 @@ combine(const LaFVector &v1, double a1, const SVector &v2, double a2)
 }
 
 LaFVector
-combine(const SVector &v1, double a1, const LaFVector &v2, double a2)
+operators::combine(const SVector &v1, double a1, const LaFVector &v2, double a2)
 {
     LaFVector r = v2;
     r.combine(a2, v1, a1);
@@ -817,7 +822,7 @@ combine(const SVector &v1, double a1, const LaFVector &v2, double a2)
 }
 
 LaFVector
-combine(const LaFVector &v1, double a1, const LaFVector &v2, double a2)
+operators::combine(const LaFVector &v1, double a1, const LaFVector &v2, double a2)
 {
     LaFVector r = v1;
     r.combine(a1, v2, a2);

@@ -28,11 +28,34 @@
 #include <iostream>
 #include "wrapper.h"
 
+namespace oml{
 
 class LaFVector;
 class SVector;
 
 typedef float VFloat;
+}
+
+std::ostream & operator<<(std::ostream &f, const oml::SVector &v);
+std::istream & operator>>(std::istream &f, oml::SVector &v);
+
+std::ostream & operator<<(std::ostream &f, const oml::LaFVector &v);
+std::istream & operator>>(std::istream &f, oml::LaFVector &v);
+
+namespace oml{
+
+class operators{
+public :
+    static double dot(const oml::LaFVector &v1, const oml::LaFVector &v2);
+    static double dot(const oml::LaFVector &v1, const oml::SVector &v2);
+    static double dot(const oml::SVector &v1, const oml::LaFVector &v2);
+    static double dot(const oml::SVector &v1, const oml::SVector &v2);
+
+    static oml::SVector combine(const oml::SVector &v1, double a1, const oml::SVector &v2, double a2);
+    static oml::LaFVector combine(const oml::LaFVector &v1, double a1, const oml::SVector &v2, double a2);
+    static oml::LaFVector combine(const oml::SVector &v1, double a1, const oml::LaFVector &v2, double a2);
+    static oml::LaFVector combine(const oml::LaFVector &v1, double a1, const oml::LaFVector &v2, double a2);
+};
 
 class LaFVector {
 private:
@@ -115,11 +138,13 @@ public:
     void combine(double c1, const SVector &v2, double c2);
 
 
-    friend std::ostream & operator<<(std::ostream &f, const LaFVector &v);
-    friend std::istream & operator>>(std::istream &f, LaFVector &v);
+    friend std::ostream & ::operator<<(std::ostream &f, const LaFVector &v);
+    friend std::istream & ::operator>>(std::istream &f, LaFVector &v);
     bool save(std::ostream &f) const;
     bool load(std::istream &f);
 };
+
+
 
 class SVector {
 public:
@@ -199,25 +224,16 @@ public:
     void scale(double c1);
     void combine(double c1, const SVector &v2, double c2);
 
-    friend std::ostream & operator<<(std::ostream &f, const SVector &v);
-    friend std::istream & operator>>(std::istream &f, SVector &v);
+    friend std::ostream & ::operator<<(std::ostream &f, const SVector &v);
+    friend std::istream & ::operator>>(std::istream &f, SVector &v);
     bool save(std::ostream &f) const;
     bool load(std::istream &f);
 
-    friend SVector combine(const SVector &v1, double a1,
-            const SVector &v2, double a2);
+    friend SVector operators::combine(const SVector &v1, double a1,
+                           const SVector &v2, double a2);
 };
 
-double dot(const LaFVector &v1, const LaFVector &v2);
-double dot(const LaFVector &v1, const SVector &v2);
-double dot(const SVector &v1, const LaFVector &v2);
-double dot(const SVector &v1, const SVector &v2);
-
-SVector combine(const SVector &v1, double a1, const SVector &v2, double a2);
-LaFVector combine(const LaFVector &v1, double a1, const SVector &v2, double a2);
-LaFVector combine(const SVector &v1, double a1, const LaFVector &v2, double a2);
-LaFVector combine(const LaFVector &v1, double a1, const LaFVector &v2, double a2);
-
+}
 
 
 #endif

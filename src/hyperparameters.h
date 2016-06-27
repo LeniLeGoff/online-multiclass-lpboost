@@ -17,6 +17,8 @@
 #include <string>
 using namespace std;
 
+namespace oml{
+
 typedef enum {
     EXPONENTIAL, LOGIT
 } LOSS_FUNCTION;
@@ -25,50 +27,51 @@ typedef enum {
     WEAK_ORF, WEAK_LARANK
 } WEAK_LEARNER;
 
-class Hyperparameters {
- public:
-    Hyperparameters(){}
-    Hyperparameters(const string& confFile);
-
+struct Hyperparameters {
     // Forest
-    int numRandomTests;
-    int counterThreshold;
-    int maxDepth;
-    int numTrees;
+    static int numRandomTests;
+    static int counterThreshold;
+    static int maxDepth;
+    static int numTrees;
 
     // Linear LaRank
-    double larankC;
+    static double larankC;
 
     // Boosting
-    int numBases;
-    WEAK_LEARNER weakLearner;
+    static int numBases;
+    static WEAK_LEARNER weakLearner;
 
     // Online MCBoost
-    double shrinkage;
-    LOSS_FUNCTION lossFunction;
+    static double shrinkage;
+    static LOSS_FUNCTION lossFunction;
 
     // Online MCLPBoost
-    double C;
-    int cacheSize;
-    double nuD;
-    double nuP;
-    double annealingRate;
-    double theta;
-    int numIterations;
+    static double C;
+    static int cacheSize;
+    static double nuD;
+    static double nuP;
+    static double annealingRate;
+    static double theta;
+    static  int numIterations;
 
     // Experimenter
-    int findTrainError;
-    int numEpochs;
+    static int findTrainError;
+    static int numEpochs;
 
     // Data
-    string trainData;
-    string trainLabels;
-    string testData;
-    string testLabels;
+    static string trainData;
+    static string trainLabels;
+    static string testData;
+    static string testLabels;
 
     // Output
-    string savePath;
-    int verbose;
+    static string savePath;
+    static int verbose;
 };
+
+void load_config_file(const string& confFile);
+
+}
+
 
 #endif /* HYPERPARAMETERS_H_ */

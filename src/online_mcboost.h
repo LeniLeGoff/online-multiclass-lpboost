@@ -22,13 +22,15 @@
 #include "hyperparameters.h"
 #include "utilities.h"
 
+namespace oml{
+
 class OnlineMCBoost: public Booster {
- public:
+public:
     OnlineMCBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange);
 
     virtual void update(Sample& sample);
 
- private:
+private:
     inline double d_exp(const double& fy) {
         return exp(-fy);
     }
@@ -37,5 +39,6 @@ class OnlineMCBoost: public Booster {
         return 1.0 / (1.0 + exp(fy));
     }
 };
+}
 
 #endif /* ONLINEMCBOOST_H_ */

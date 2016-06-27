@@ -11,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 
 #define DIM 10000
-#define BATCH 50
+#define BATCH 1000
 
 void randPermute(const int& inNum, const int& inPart, vector<int>& outVect) {
     size_t size = inNum-inPart;

@@ -6,8 +6,8 @@
  * (at your option) any later version.
  *
  * Written (W) 2010 Amir Saffari, amir@ymer.org
- * Copyright (C) 2010 Amir Saffari, 
- *                    Institute for Computer Graphics and Vision, 
+ * Copyright (C) 2010 Amir Saffari,
+ *                    Institute for Computer Graphics and Vision,
  *                    Graz University of Technology, Austria
  */
 
@@ -21,10 +21,12 @@
 #include <set>
 #include <string>
 #include <Eigen/Core>
-#include <Eigen/Array>
+//#include <Eigen/Array>
 
 using namespace std;
 using namespace Eigen;
+
+namespace oml{
 
 // DATA CLASSES
 class Sample {
@@ -36,10 +38,13 @@ public:
 };
 
 class DataSet {
- public:
+public:
     void findFeatRange();
 
     void load(const string& x_filename, const string& y_filename);
+
+    void add(const VectorXd& features,int label, double weight);
+    void add(const Sample& s);
 
     vector<Sample> m_samples;
     int m_numSamples;
@@ -51,7 +56,7 @@ class DataSet {
 };
 
 class Result {
- public:
+public:
     Result();
     Result(const int& numClasses);
 
@@ -68,5 +73,6 @@ public:
     double margin;
     int yPrime; // Class with closest margin to the sample
 };
+}
 
 #endif /* DATA_H_ */

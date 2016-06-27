@@ -21,8 +21,10 @@
 #include "linear_larank/LaRank.h"
 #include "linear_larank/vectors.h"
 
+namespace oml{
+
 class LinearLaRank: public Classifier {
- public:
+public:
     LinearLaRank(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange);
 
     ~LinearLaRank();
@@ -30,10 +32,11 @@ class LinearLaRank: public Classifier {
     virtual void update(Sample& sample);
     virtual void eval(Sample& sample, Result& result);
 
- protected:
+protected:
     Machine* m_svm;
     int m_sampleCount;
     const int* m_numFeatures;
 };
+}
 
 #endif /* LINEARLARANK_H_ */

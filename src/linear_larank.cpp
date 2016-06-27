@@ -13,6 +13,8 @@
 
 #include "linear_larank.h"
 
+using namespace oml;
+
 LinearLaRank::LinearLaRank(const Hyperparameters& hp, const int& numClasses, const int& numFeatures,
                            const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
     Classifier(hp, numClasses), m_sampleCount(0), m_numFeatures(&numFeatures) {

@@ -27,6 +27,8 @@
 
 using namespace std;
 
+namespace oml{
+
 // Random numbers
 inline unsigned int getDevRandom() {
     ifstream devFile("/dev/urandom", ios::binary);
@@ -110,6 +112,7 @@ inline void randPerm(const int& inNum, const int& inPart, vector<int>& outVect) 
     }
 
     outVect.erase(outVect.begin() + inPart, outVect.end());
+}
 }
 
 #endif /* UTILITIES_H_ */

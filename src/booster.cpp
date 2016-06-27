@@ -1,4 +1,4 @@
-// -*- C++ -*-
+    // -*- C++ -*-
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,8 @@
 #include "booster.h"
 #include "online_rf.h"
 #include "linear_larank.h"
+
+using namespace oml;
 
 Booster::Booster(const Hyperparameters& hp, const int& numClasses, const int& numFeatures,
                  const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :

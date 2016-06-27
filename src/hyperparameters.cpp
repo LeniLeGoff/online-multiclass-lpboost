@@ -19,7 +19,9 @@
 using namespace std;
 using namespace libconfig;
 
-Hyperparameters::Hyperparameters(const string& confFile) {
+using namespace oml;
+
+void load_config_file(const string& confFile) {
     cout << "Loading config file: " << confFile << " ... ";
 
     Config configFile;
@@ -28,46 +30,46 @@ Hyperparameters::Hyperparameters(const string& confFile) {
     int tmp;
 
     // Forest
-    maxDepth = configFile.lookup("Forest.maxDepth");
-    numRandomTests = configFile.lookup("Forest.numRandomTests");
-    counterThreshold = configFile.lookup("Forest.counterThreshold");
-    numTrees = configFile.lookup("Forest.numTrees");
+    Hyperparameters::maxDepth = configFile.lookup("Forest.maxDepth");
+    Hyperparameters::numRandomTests = configFile.lookup("Forest.numRandomTests");
+    Hyperparameters::counterThreshold = configFile.lookup("Forest.counterThreshold");
+    Hyperparameters::numTrees = configFile.lookup("Forest.numTrees");
 
     // LaRank
-    larankC = configFile.lookup("LaRank.larankC");
+    Hyperparameters::larankC = configFile.lookup("LaRank.larankC");
 
     // Boosting
-    numBases = configFile.lookup("Boosting.numBases");
+    Hyperparameters::numBases = configFile.lookup("Boosting.numBases");
     tmp = configFile.lookup("Boosting.weakLearner");
-    weakLearner = (WEAK_LEARNER) tmp;
+    Hyperparameters::weakLearner = (WEAK_LEARNER) tmp;
 
     // Online MCBoost
-    shrinkage = configFile.lookup("Boosting.shrinkage");
+    Hyperparameters::shrinkage = configFile.lookup("Boosting.shrinkage");
     tmp = configFile.lookup("Boosting.lossFunction");
-    lossFunction = (LOSS_FUNCTION) tmp;
+    Hyperparameters::lossFunction = (LOSS_FUNCTION) tmp;
 
     // Online MCLPBoost
-    C = configFile.lookup("Boosting.C");
-    cacheSize = configFile.lookup("Boosting.cacheSize");
-    nuD = configFile.lookup("Boosting.nuD");
-    nuP = configFile.lookup("Boosting.nuP");
-    theta = configFile.lookup("Boosting.theta");
-    annealingRate = configFile.lookup("Boosting.annealingRate");
-    numIterations = configFile.lookup("Boosting.numIterations");
+    Hyperparameters::C = configFile.lookup("Boosting.C");
+    Hyperparameters::cacheSize = configFile.lookup("Boosting.cacheSize");
+    Hyperparameters::nuD = configFile.lookup("Boosting.nuD");
+    Hyperparameters::nuP = configFile.lookup("Boosting.nuP");
+    Hyperparameters::theta = configFile.lookup("Boosting.theta");
+    Hyperparameters::annealingRate = configFile.lookup("Boosting.annealingRate");
+    Hyperparameters::numIterations = configFile.lookup("Boosting.numIterations");
 
     // Experimenter
-    findTrainError = configFile.lookup("Experimenter.findTrainError");
-    numEpochs = configFile.lookup("Experimenter.numEpochs");
+    Hyperparameters::findTrainError = configFile.lookup("Experimenter.findTrainError");
+    Hyperparameters::numEpochs = configFile.lookup("Experimenter.numEpochs");
 
     // Data
-    trainData = (const char *) configFile.lookup("Data.trainData");
-    trainLabels = (const char *) configFile.lookup("Data.trainLabels");
-    testData = (const char *) configFile.lookup("Data.testData");
-    testLabels = (const char *) configFile.lookup("Data.testLabels");
+    Hyperparameters::trainData = (const char *) configFile.lookup("Data.trainData");
+    Hyperparameters::trainLabels = (const char *) configFile.lookup("Data.trainLabels");
+    Hyperparameters::testData = (const char *) configFile.lookup("Data.testData");
+    Hyperparameters::testLabels = (const char *) configFile.lookup("Data.testLabels");
 
     // Output
-    savePath = (const char *) configFile.lookup("Output.savePath");
-    verbose = configFile.lookup("Output.verbose");
+    Hyperparameters::savePath = (const char *) configFile.lookup("Output.savePath");
+    Hyperparameters::verbose = configFile.lookup("Output.verbose");
 
     cout << "Done." << endl;
 }

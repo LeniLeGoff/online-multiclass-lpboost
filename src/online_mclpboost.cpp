@@ -13,6 +13,8 @@
 
 #include "online_mclpboost.h"
 
+using namespace oml;
+
 OnlineMCLPBoost::OnlineMCLPBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, 
                                  const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
     Booster(hp, numClasses, numFeatures, minFeatRange, maxFeatRange), m_nuD(hp.nuD), m_nuP(hp.nuP) {

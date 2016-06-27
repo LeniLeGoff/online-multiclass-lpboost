@@ -20,17 +20,20 @@
 #include "hyperparameters.h"
 #include "utilities.h"
 
+namespace oml{
+
 class OnlineMCLPBoost : public Booster {
- public:
+public:
     OnlineMCLPBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange);
 
     virtual void update(Sample& sample);
 
- private:
+private:
     double m_nuD;
     double m_nuP;
 
     int findYPrime(const Sample& sample, const Result& result);
 };
+}
 
 #endif // ONLINE_MCLPBOOST_H

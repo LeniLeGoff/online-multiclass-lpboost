@@ -13,6 +13,8 @@
 
 #include "data.h"
 
+using namespace oml;
+
 void DataSet::findFeatRange() {
     m_minFeatRange = VectorXd(m_numFeatures);
     m_maxFeatRange = VectorXd(m_numFeatures);
@@ -33,6 +35,21 @@ void DataSet::findFeatRange() {
         m_minFeatRange(nFeat) = minVal;
         m_maxFeatRange(nFeat) = maxVal;
     }
+}
+
+void DataSet::add(const VectorXd &features, int label, double weight){
+    Sample s;
+    s.x = features;
+    s.y = label;
+    s.w = weight;
+
+    m_samples.push_back(s);
+    m_numSamples = m_samples.size();
+}
+
+void DataSet::add(const Sample& s){
+    m_samples.push_back(s);
+    m_numSamples = m_samples.size();
 }
 
 void DataSet::load(const string& x_filename, const string& y_filename) {

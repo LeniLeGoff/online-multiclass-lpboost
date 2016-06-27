@@ -13,6 +13,8 @@
 
 #include "online_mcboost.h"
 
+using namespace oml;
+
 OnlineMCBoost::OnlineMCBoost(const Hyperparameters& hp, const int& numClasses, const int& numFeatures, 
                              const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
     Booster(hp, numClasses, numFeatures, minFeatRange, maxFeatRange) {

@@ -50,6 +50,8 @@
 
 // EXAMPLER: to read and store data and model files.
 
+namespace oml{
+
 class Exampler {
 public:
 
@@ -57,11 +59,11 @@ public:
         // AMIR BEGINS
         // Added the sample weight
         example_t(SVector x, int y)
-        : inpt(x), cls(y), w(1.0)
+            : inpt(x), cls(y), w(1.0)
         {
         }
         example_t(SVector x, int y, double w)
-        : inpt(x), cls(y), w(w)
+            : inpt(x), cls(y), w(w)
         {
         }
         // AMIR ENDS
@@ -79,69 +81,69 @@ public:
 
     typedef std::vector< example_t> examples_t;
 
-//     int libsvm_load_data(char *filename, bool model_file)
-//     {
-//         int index;
-//         double value;
-//         int elements, i;
-//         FILE *fp = fopen(filename, "r");
+    //     int libsvm_load_data(char *filename, bool model_file)
+    //     {
+    //         int index;
+    //         double value;
+    //         int elements, i;
+    //         FILE *fp = fopen(filename, "r");
 
-//         if (fp == NULL) {
-//             fprintf(stderr, "Can't open input file \"%s\"\n", filename);
-//             exit(1);
-//         } else {
-//             printf("loading \"%s\"..  \n", filename);
-//         }
-//         int msz = 0;
-//         elements = 0;
-//         while (1) {
-//             int c = fgetc(fp);
-//             switch (c) {
-//             case '\n':
-//                 ++msz;
-//                 elements = 0;
-//                 break;
-//             case ':':
-//                 ++elements;
-//                 break;
-//             case EOF:
-//                 goto out;
-//             default:
-//                 ;
-//             }
-//         }
-//     out:
-//         rewind(fp);
-//         max_index = 0;
-//         nb_labels = 0;
-//         for (i = 0; i < msz; i++) {
-//             int label;
-//             SVector v;
-//             fscanf(fp, "%d", &label);
-//             if ((int) label >= nb_labels) nb_labels = label;
-//             while (1) {
-//                 int c;
-//                 do {
-//                     c = getc(fp);
-//                     if (c == '\n') goto out2;
-//                 } while (isspace(c));
-//                 ungetc(c, fp);
-//                 fscanf(fp, "%d:%lf", &index, &value);
-//                 v.set(index, value);
-//                 if (index > max_index) max_index = index;
-//             }
+    //         if (fp == NULL) {
+    //             fprintf(stderr, "Can't open input file \"%s\"\n", filename);
+    //             exit(1);
+    //         } else {
+    //             printf("loading \"%s\"..  \n", filename);
+    //         }
+    //         int msz = 0;
+    //         elements = 0;
+    //         while (1) {
+    //             int c = fgetc(fp);
+    //             switch (c) {
+    //             case '\n':
+    //                 ++msz;
+    //                 elements = 0;
+    //                 break;
+    //             case ':':
+    //                 ++elements;
+    //                 break;
+    //             case EOF:
+    //                 goto out;
+    //             default:
+    //                 ;
+    //             }
+    //         }
+    //     out:
+    //         rewind(fp);
+    //         max_index = 0;
+    //         nb_labels = 0;
+    //         for (i = 0; i < msz; i++) {
+    //             int label;
+    //             SVector v;
+    //             fscanf(fp, "%d", &label);
+    //             if ((int) label >= nb_labels) nb_labels = label;
+    //             while (1) {
+    //                 int c;
+    //                 do {
+    //                     c = getc(fp);
+    //                     if (c == '\n') goto out2;
+    //                 } while (isspace(c));
+    //                 ungetc(c, fp);
+    //                 fscanf(fp, "%d:%lf", &index, &value);
+    //                 v.set(index, value);
+    //                 if (index > max_index) max_index = index;
+    //             }
 
-//         out2:
-//             data.push_back(example_t(v, label));
-//         }
-//         fclose(fp);
-//         if (model_file)
-//             printf("-> classes: %d\n", msz);
-//         else
-//             printf("-> examples: %d features: %d labels: %d\n", msz, max_index, nb_labels);
-//         nb_ex = msz;
-//         return msz;
-//     }
+    //         out2:
+    //             data.push_back(example_t(v, label));
+    //         }
+    //         fclose(fp);
+    //         if (model_file)
+    //             printf("-> classes: %d\n", msz);
+    //         else
+    //             printf("-> examples: %d features: %d labels: %d\n", msz, max_index, nb_labels);
+    //         nb_ex = msz;
+    //         return msz;
+    //     }
 
     // AMIR BEGINS
     // Loads data from Python Numpy
@@ -208,17 +210,17 @@ public:
     // AMIR BEGINS
     // Added the sample weight
     LaRankPattern(int x_id, const SVector& x, int y, double w)
-    : x_id(x_id), x(x), y(y), w(w)
+        : x_id(x_id), x(x), y(y), w(w)
     {
     }
     LaRankPattern(int x_id, const SVector& x, int y)
-    : x_id(x_id), x(x), y(y), w(1.0)
+        : x_id(x_id), x(x), y(y), w(1.0)
     {
     }
     // AMIR ENDS
 
     LaRankPattern()
-    : x_id(0)
+        : x_id(0)
     {
     }
 
@@ -386,7 +388,7 @@ public:
     }
 
     LaRankOutput(LaFVector& w)
-    : wy(w)
+        : wy(w)
     {
     }
 
@@ -401,7 +403,7 @@ public:
 
     double computeScore(const SVector& x)
     {
-        return dot(wy, x);
+        return operators::dot(wy, x);
     }
 
     void update(const SVector& xi, double lambda, int xi_id)
@@ -447,7 +449,7 @@ public:
 
     double getW2() const
     {
-        return dot(wy, wy);
+        return operators::dot(wy, wy);
     }
 
 private:
@@ -477,8 +479,8 @@ class LaRank : public Machine {
 public:
 
     LaRank() : nb_seen_examples(0), nb_removed(0),
-    n_pro(0), n_rep(0), n_opt(0),
-    w_pro(1), w_rep(1), w_opt(1), dual(0)
+        n_pro(0), n_rep(0), n_opt(0),
+        w_pro(1), w_rep(1), w_opt(1), dual(0)
     {
     }
 
@@ -751,12 +753,12 @@ private:
     struct outputgradient_t {
 
         outputgradient_t(int output, double gradient)
-        : output(output), gradient(gradient)
+            : output(output), gradient(gradient)
         {
         }
 
         outputgradient_t()
-        : output(0), gradient(0)
+            : output(0), gradient(0)
         {
         }
 
@@ -780,7 +782,7 @@ private:
     struct process_return_t {
 
         process_return_t(double dual, int ypred)
-        : dual_increase(dual), ypred(ypred)
+            : dual_increase(dual), ypred(ypred)
         {
         }
 
@@ -862,7 +864,7 @@ private:
             patterns.insert(pattern);
 
         //Compute lambda and clippe it
-        double kii = dot(pattern.x, pattern.x);
+        double kii = operators::dot(pattern.x, pattern.x);
         double lambda = (ygp.gradient - ygm.gradient) / (2 * kii);
         if (ptype == processOptimize || outp->isSupportVector(pattern.x_id)) {
             double beta = outp->getBeta(pattern.x_id);
@@ -950,7 +952,7 @@ private:
             patterns.insert(pattern);
 
         //Compute lambda and clippe it
-        double kii = dot(pattern.x, pattern.x);
+        double kii = operators::dot(pattern.x, pattern.x);
         double lambda = (ygp.gradient - ygm.gradient) / (2 * kii);
         if (ptype == processOptimize || outp->isSupportVector(pattern.x_id)) {
             double beta = outp->getBeta(pattern.x_id);
@@ -1069,5 +1071,6 @@ private:
     }
 
 };
+}
 
 #endif // !LARANK_H_
