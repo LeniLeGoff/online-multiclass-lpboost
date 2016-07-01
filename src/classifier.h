@@ -17,6 +17,9 @@
 #include "data.h"
 #include "hyperparameters.h"
 #include <memory>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/string.hpp>
+
 
 using namespace std;
 
@@ -25,13 +28,21 @@ namespace oml{
 class Classifier {
 public:
 
-    typedef std::shared_ptr<Classifier> Ptr;
-    typedef const std::shared_ptr<Classifier> ConstPtr;
+    friend class boost::serialization::access;
 
-    Classifier(const int& numClasses);
-    Classifier(const Hyperparameters& hp,const int &numClasses);
+    Classifier(){}
+    Classifier(const int& numClasses) :
+        m_numClasses(numClasses) {
+    }
+    Classifier(const Hyperparameters &hp, const int &numClasses) :
+       m_hp(&hp), m_numClasses(numClasses) {
+    }
+    Classifier(const Classifier& c)
+        : m_numClasses(c.m_numClasses), m_name(c.m_name), m_hp(c.m_hp){}
 
-    virtual ~Classifier();
+    virtual ~Classifier(){
+
+    }
 
     virtual void update(Sample& sample) = 0;
     virtual void eval(Sample& sample, Result& result) = 0;
@@ -40,9 +51,14 @@ public:
         return m_name;
     }
 
+    template <typename archive>
+    void serialize(archive &arch,const unsigned int v){
+        arch & m_numClasses;
+        arch & m_name;
+    }
 
 protected:
-    const int* m_numClasses;
+    int m_numClasses;
     const Hyperparameters* m_hp;
     string m_name;
 };

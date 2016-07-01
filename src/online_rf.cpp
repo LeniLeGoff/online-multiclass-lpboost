@@ -16,7 +16,7 @@
 using namespace oml;
 
 RandomTest::RandomTest(const int& numClasses, const int& numFeatures, const VectorXd &minFeatRange, const VectorXd &maxFeatRange) :
-    m_numClasses(&numClasses), m_trueCount(0.0), m_falseCount(0.0),
+    m_numClasses(numClasses), m_trueCount(0.0), m_falseCount(0.0),
     m_trueStats(VectorXd::Zero(numClasses)), m_falseStats(VectorXd::Zero(numClasses)) {
     m_feature = randDouble(0, numFeatures /*+ 1*/);
     m_threshold = randDouble(minFeatRange(m_feature), maxFeatRange(m_feature));
@@ -33,14 +33,14 @@ bool RandomTest::eval(const Sample& sample) const {
 double RandomTest::score() const {
     double trueScore = 0.0, falseScore = 0.0, p;
     if (m_trueCount) {
-        for (int nClass = 0; nClass < *m_numClasses; nClass++) {
+        for (int nClass = 0; nClass < m_numClasses; nClass++) {
             p = m_trueStats[nClass] / m_trueCount;
             trueScore += p * (1 - p);
         }
     }
         
     if (m_falseCount) {
-        for (int nClass = 0; nClass < *m_numClasses; nClass++) {
+        for (int nClass = 0; nClass < m_numClasses; nClass++) {
             p = m_falseStats[nClass] / m_falseCount;
             falseScore += p * (1 - p);
         }

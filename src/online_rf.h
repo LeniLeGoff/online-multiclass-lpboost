@@ -14,16 +14,30 @@
 #ifndef ONLINERF_H_
 #define ONLINERF_H_
 
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/vector.hpp>
+
 #include "classifier.h"
 #include "data.h"
 #include "hyperparameters.h"
 #include "utilities.h"
+#include "serializisation.hpp"
+
 
 namespace oml {
 
 class RandomTest {
 public:
+
+    friend class boost::serialization::access;
+
+    RandomTest(){}
     RandomTest(const int& numClasses, const int& numFeatures, const VectorXd &minFeatRange, const VectorXd &maxFeatRange);
+    RandomTest(const RandomTest& rt)
+        : m_numClasses(rt.m_numClasses), m_feature(rt.m_feature), m_threshold(rt.m_threshold),
+          m_trueCount(rt.m_trueCount), m_falseCount(rt.m_falseCount), m_trueStats(rt.m_trueStats),
+          m_falseStats(rt.m_falseStats){}
 
     void update(const Sample& sample);
 
@@ -33,8 +47,19 @@ public:
 
     pair<VectorXd, VectorXd > getStats() const;
 
+    template <typename archive>
+    void serialize(archive& arch, const unsigned int v){
+        arch & m_numClasses;
+        arch & m_feature;
+        arch & m_threshold;
+        arch & m_trueCount;
+        arch & m_falseCount;
+        boost::serialization::serialize(arch,m_trueStats,v);
+        boost::serialization::serialize(arch,m_falseStats,v);
+    }
+
 protected:
-    const int* m_numClasses;
+    int m_numClasses;
     int m_feature;
     double m_threshold;
 
@@ -49,37 +74,50 @@ protected:
 template <typename hp_t>
 class OnlineNode {
 public:
+
+    friend class boost::serialization::access;
+
+    OnlineNode(){}
     OnlineNode(const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange,
                const int& depth) :
-        m_numClasses(&numClasses), m_depth(depth), m_isLeaf(true), m_label(-1),
+        m_numClasses(numClasses), m_depth(depth), m_isLeaf(true), m_label(-1),
         m_counter(0.0), m_parentCounter(0.0), m_labelStats(VectorXd::Zero(numClasses)),
-        m_minFeatRange(&minFeatRange), m_maxFeatRange(&maxFeatRange) {
+        m_minFeatRange(minFeatRange), m_maxFeatRange(maxFeatRange) {
         // Creating random tests
         for (int nTest = 0; nTest < hp_t::numRandomTests; nTest++) {
-            m_onlineTests.push_back(new RandomTest(numClasses, numFeatures, minFeatRange, maxFeatRange));
+            boost::shared_ptr<RandomTest> tmp(new RandomTest(numClasses, numFeatures, minFeatRange, maxFeatRange));
+            m_onlineTests.push_back(tmp);
         }
     }
 
     OnlineNode(const int& numClasses, const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange,
                const int& depth, const VectorXd& parentStats):
-        m_numClasses(&numClasses), m_depth(depth), m_isLeaf(true), m_label(-1),
+        m_numClasses(numClasses), m_depth(depth), m_isLeaf(true), m_label(-1),
         m_counter(0.0), m_parentCounter(parentStats.sum()), m_labelStats(parentStats),
-        m_minFeatRange(&minFeatRange), m_maxFeatRange(&maxFeatRange) {
+        m_minFeatRange(minFeatRange), m_maxFeatRange(maxFeatRange) {
         m_labelStats.maxCoeff(&m_label);
         // Creating random tests
         for (int nTest = 0; nTest < hp_t::numRandomTests; nTest++) {
-            m_onlineTests.push_back(new RandomTest(numClasses, numFeatures, minFeatRange, maxFeatRange));
+            boost::shared_ptr<RandomTest> tmp(new RandomTest(numClasses, numFeatures, minFeatRange, maxFeatRange));
+            m_onlineTests.push_back(tmp);
         }
     }
 
+    OnlineNode(const OnlineNode& on)
+        : m_numClasses(on.m_numClasses), m_depth(on.m_depth), m_isLeaf(on.m_isLeaf),
+          m_label(on.m_label), m_counter(on.m_counter), m_parentCounter(on.m_parentCounter),
+          m_labelStats(on.m_labelStats), m_minFeatRange(on.m_minFeatRange), m_maxFeatRange(on.m_maxFeatRange),
+          m_leftChildNode(on.m_leftChildNode), m_rightChildNode(on.m_rightChildNode),
+          m_onlineTests(on.m_onlineTests), m_bestTest(on.m_bestTest){}
+
     ~OnlineNode() {
         if (!m_isLeaf) {
-            delete m_leftChildNode;
-            delete m_rightChildNode;
-            delete m_bestTest;
+            m_leftChildNode.reset();
+            m_rightChildNode.reset();
+            m_bestTest.reset();
         } else {
             for (int nTest = 0; nTest < hp_t::numRandomTests; nTest++) {
-                delete m_onlineTests[nTest];
+                m_onlineTests[nTest].reset();
             }
         }
     }
@@ -87,23 +125,39 @@ public:
     void update(const Sample& sample);
     void eval(const Sample& sample, Result& result);
 
+    template <typename archive>
+    void serialize(archive &arch, const unsigned int v){
+        arch & m_numClasses;
+        arch & m_depth;
+        arch & m_isLeaf;
+        arch & m_label;
+        arch & m_counter;
+        arch & m_parentCounter;
+        boost::serialization::serialize(arch,m_labelStats,v);
+        boost::serialization::serialize(arch,m_minFeatRange,v);
+        boost::serialization::serialize(arch,m_maxFeatRange,v);
+        arch & m_leftChildNode;
+        arch & m_rightChildNode;
+        arch & m_onlineTests;
+        arch & m_bestTest;
+    }
+
 private:
-    const int* m_numClasses;
+    int m_numClasses;
     int m_depth;
     bool m_isLeaf;
-    const Hyperparameters* m_hp;
     int m_label;
     double m_counter;
     double m_parentCounter;
     VectorXd m_labelStats;
-    const VectorXd* m_minFeatRange;
-    const VectorXd* m_maxFeatRange;
+    VectorXd m_minFeatRange;
+    VectorXd m_maxFeatRange;
 
-    OnlineNode* m_leftChildNode;
-    OnlineNode* m_rightChildNode;
+    boost::shared_ptr<OnlineNode<hp_t>> m_leftChildNode;
+    boost::shared_ptr<OnlineNode<hp_t>> m_rightChildNode;
 
-    vector<RandomTest*> m_onlineTests;
-    RandomTest* m_bestTest;
+    vector<boost::shared_ptr<RandomTest>> m_onlineTests;
+    boost::shared_ptr<RandomTest> m_bestTest;
 
     bool shouldISplit() const;
 };
@@ -111,38 +165,59 @@ private:
 template <typename hp_t>
 class OnlineTree: public Classifier {
 public:
+
+    friend class boost::serialization::access;
+
+    OnlineTree(){}
     OnlineTree(const int& numClasses,
                const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange)
     : Classifier(numClasses) {
-        m_rootNode = new OnlineNode<hp_t>(numClasses, numFeatures, minFeatRange, maxFeatRange, 0);
+        m_rootNode.reset(new OnlineNode<hp_t>(numClasses, numFeatures, minFeatRange, maxFeatRange, 0));
         m_name = "OnlineTree";
     }
 
+    OnlineTree(const OnlineTree& ot)
+        : Classifier(ot), m_rootNode(ot.m_rootNode){}
+
     ~OnlineTree() {
-        delete m_rootNode;
+        m_rootNode.reset();
     }
 
     virtual void update(Sample& sample);
 
     virtual void eval(Sample& sample, Result& result);
 
+    template <typename archive>
+    void serialize(archive& arch, const unsigned int v){
+        arch & boost::serialization::base_object<Classifier>(*this);
+        arch & m_rootNode;
+    }
+
 private:
-    OnlineNode<hp_t>* m_rootNode;
+    boost::shared_ptr<OnlineNode<hp_t>> m_rootNode;
 };
 
 template <typename hp_t>
 class OnlineRF: public Classifier {
 public:
+
+    friend class boost::serialization::access;
+
+    OnlineRF(){}
     OnlineRF(const int& numClasses,
              const int& numFeatures, const VectorXd& minFeatRange, const VectorXd& maxFeatRange) :
         Classifier(numClasses), m_counter(0.0), m_oobe(0.0) {
-        typename OnlineTree<hp_t>::Ptr tree;
+        boost::shared_ptr<OnlineTree<hp_t>> tree;
         for (int nTree = 0; nTree < hp_t::numTrees; nTree++) {
             tree.reset(new OnlineTree<hp_t>( numClasses, numFeatures, minFeatRange, maxFeatRange));
             m_trees.push_back(tree);
         }
         m_name = "OnlineRF";
     }
+
+    OnlineRF(const OnlineRF& orf)
+        : Classifier(orf), m_counter(orf.m_counter),
+          m_oobe(orf.m_oobe), m_trees(orf.m_trees){}
 
     ~OnlineRF() {
         for (int nTree = 0; nTree < hp_t::numTrees; nTree++) {
@@ -154,11 +229,21 @@ public:
 
     virtual void eval(Sample& sample, Result& result);
 
+    template <typename archive>
+    void serialize(archive &arch, const unsigned int v){
+        arch & boost::serialization::base_object<Classifier>(*this);
+        arch & m_counter;
+        arch & m_oobe;
+        arch & m_trees;
+    }
+
+    double get_oobe(){return m_oobe;}
+
 protected:
     double m_counter;
     double m_oobe;
 
-    vector< typename OnlineTree<hp_t>::Ptr> m_trees;
+    vector< boost::shared_ptr<OnlineTree<hp_t>>> m_trees;
 };
 
 template <typename hp_t>
@@ -168,7 +253,7 @@ inline void OnlineNode<hp_t>::update(const Sample& sample) {
 
     if (m_isLeaf) {
         // Update online tests
-        for (vector<RandomTest*>::iterator itr = m_onlineTests.begin(); itr != m_onlineTests.end(); ++itr) {
+        for (auto itr = m_onlineTests.begin(); itr != m_onlineTests.end(); ++itr) {
             (*itr)->update(sample);
         }
 
@@ -182,7 +267,7 @@ inline void OnlineNode<hp_t>::update(const Sample& sample) {
             // Find the best online test
             int nTest = 0, minIndex = 0;
             double minScore = 1, score;
-            for (vector<RandomTest*>::const_iterator itr(m_onlineTests.begin()); itr != m_onlineTests.end(); ++itr, nTest++) {
+            for (vector<boost::shared_ptr<RandomTest>>::const_iterator itr = m_onlineTests.begin(); itr != m_onlineTests.end(); ++itr, nTest++) {
                 score = (*itr)->score();
                 if (score < minScore) {
                     minScore = score;
@@ -192,16 +277,16 @@ inline void OnlineNode<hp_t>::update(const Sample& sample) {
             m_bestTest = m_onlineTests[minIndex];
             for (int nTest = 0; nTest < hp_t::numRandomTests; nTest++) {
                 if (minIndex != nTest) {
-                    delete m_onlineTests[nTest];
+                    m_onlineTests[nTest].reset();
                 }
             }
 
             // Split
             pair<VectorXd, VectorXd> parentStats = m_bestTest->getStats();
-            m_rightChildNode = new OnlineNode<hp_t>(*m_numClasses, m_minFeatRange->rows(), *m_minFeatRange, *m_maxFeatRange, m_depth + 1,
-                                              parentStats.first);
-            m_leftChildNode = new OnlineNode<hp_t>(*m_numClasses, m_minFeatRange->rows(), *m_minFeatRange, *m_maxFeatRange, m_depth + 1,
-                                             parentStats.second);
+            m_rightChildNode.reset(new OnlineNode<hp_t>(m_numClasses, m_minFeatRange.rows(), m_minFeatRange, m_maxFeatRange, m_depth + 1,
+                                              parentStats.first));
+            m_leftChildNode.reset(new OnlineNode<hp_t>(m_numClasses, m_minFeatRange.rows(), m_minFeatRange, m_maxFeatRange, m_depth + 1,
+                                             parentStats.second));
         }
     } else {
         if (m_bestTest->eval(sample)) {
@@ -219,7 +304,7 @@ inline void OnlineNode<hp_t>::eval(const Sample& sample, Result& result) {
             result.confidence = m_labelStats / (m_counter + m_parentCounter);
             result.prediction = m_label;
         } else {
-            result.confidence = VectorXd::Constant(m_labelStats.rows(), 1.0 / *m_numClasses);
+            result.confidence = VectorXd::Constant(m_labelStats.rows(), 1.0 / m_numClasses);
             result.prediction = 0;
         }
     } else {
@@ -234,7 +319,7 @@ inline void OnlineNode<hp_t>::eval(const Sample& sample, Result& result) {
 template <typename hp_t>
 inline bool OnlineNode<hp_t>::shouldISplit() const {
     bool isPure = false;
-    for (int nClass = 0; nClass < *m_numClasses; nClass++) {
+    for (int nClass = 0; nClass < m_numClasses; nClass++) {
         if (m_labelStats(nClass) == m_counter + m_parentCounter) {
             isPure = true;
             break;
@@ -263,7 +348,7 @@ template <typename hp_t>
 inline void OnlineRF<hp_t>::update(Sample& sample) {
     m_counter += sample.w;
 
-    Result result(*m_numClasses), treeResult;
+    Result result(m_numClasses), treeResult;
 
     int numTries;
     for (int nTree = 0; nTree < hp_t::numTrees; nTree++) {

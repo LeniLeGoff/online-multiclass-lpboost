@@ -23,13 +23,13 @@ namespace oml{
 class experimenter{
 public:
     template <typename hp_t>
-    static void train(Classifier::Ptr model, DataSet& dataset);
+    static void train(std::shared_ptr<Classifier> model, DataSet& dataset);
 
     template <typename hp_t>
-    static vector<Result> test(Classifier::Ptr model, DataSet& dataset);
+    static vector<Result> test(std::shared_ptr<Classifier> model, DataSet& dataset);
 
     template <typename hp_t>
-    static vector<Result> trainAndTest(Classifier::Ptr model, DataSet& dataset_tr, DataSet& dataset_ts);
+    static vector<Result> trainAndTest(std::shared_ptr<Classifier> model, DataSet& dataset_tr, DataSet& dataset_ts);
 
     static double compError(const vector<Result>& results, const DataSet& dataset);
     static void dispErrors(const vector<double>& errors);
@@ -37,7 +37,7 @@ public:
 };
 
 template <typename hp_t>
-void experimenter::train(Classifier::Ptr model, DataSet& dataset) {
+void experimenter::train(std::shared_ptr<Classifier> model, DataSet& dataset) {
     timeval startTime;
     gettimeofday(&startTime, NULL);
 
@@ -71,7 +71,7 @@ void experimenter::train(Classifier::Ptr model, DataSet& dataset) {
 }
 
 template <typename hp_t>
-vector<Result> experimenter::test(Classifier::Ptr model, DataSet& dataset) {
+vector<Result> experimenter::test(std::shared_ptr<Classifier> model, DataSet& dataset) {
     timeval startTime;
     gettimeofday(&startTime, NULL);
 
@@ -96,7 +96,7 @@ vector<Result> experimenter::test(Classifier::Ptr model, DataSet& dataset) {
 }
 
 template <typename hp_t>
-vector<Result> experimenter::trainAndTest(Classifier::Ptr model, DataSet& dataset_tr, DataSet& dataset_ts) {
+vector<Result> experimenter::trainAndTest(std::shared_ptr<Classifier> model, DataSet& dataset_tr, DataSet& dataset_ts) {
     timeval startTime;
     gettimeofday(&startTime, NULL);
 
